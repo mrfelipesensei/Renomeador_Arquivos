@@ -1,0 +1,69 @@
+filedialog fornece caixas de diálogo para seleção de arquivos/pastas
+
+listar_arquivos():
+    pasta = entry_pasta.get().strip()
+
+-obtém o caminho da pasta digitado/selecionado pelo usuário
+
+try:
+    arquivos = os.listdir(pasta)
+    if not arquivos:
+        text_area.delete("1.0", tk.END)
+        text_area.insert(tk.END, "A pasta está vazia.")
+
+-lista os aruivos da pasta informada
+-se a pasta estiver vazia - exibe mensagem
+
+else:
+    text_area.delete("1.0", tk.END)
+    text_area.insert(tk.END, "Arquivos encontrados:\n")
+    for arquivo in arquivos:
+        text_area.insert(tk.END, f"{arquivo}\n")
+
+-exibe a lista de arquivos na text_area
+
+except FileNotFoundError:
+    messagebox.showerror("Erro","Pasta não encontrada.")
+
+-se a pasta informada não, exibe a mensagem de Erro
+
+def renomear_arquivos():
+    pasta = entry_pasta.get().strip()
+    novo_nome = entry_nome.get().strip()
+
+-obtém a pasto e o novo nome base digitado pelo usuário
+
+if not pasta or not novo_nome:
+    messagebox.showwarning("Aviso","Preencha todos os campos")
+    return
+
+-exibe um aviso se algum dos campos estiver vazio
+
+arquivos = os.listdir(pasta)
+if not arquivos:
+    messagebox.showerror("Erro","Nenhum arquivo encontrado na pasta.")
+    return
+
+-lista os arquivos da pasta e verifica se há arquivos
+
+
+for i, arquivo in enumerate(arquivos, start=1):
+    extensao = os.path.splitext(arquivo)[1]  # Obtém a extensão do arquivo
+    novo_nome_arquivo = f"{novo_nome}_{i}{extensao}"
+    caminho_antigo = os.path.join(pasta, arquivo)
+    caminho_novo = os.path.join(pasta, novo_nome_arquivo)
+
+    os.rename(caminho_antigo, caminho_novo)
+
+-percorre a lista de arquivos, separa a extensão e cria um novo nome
+-usa os.rename() para renomear os arquivos
+
+def selecionar_pasta():
+    pasta_escolhida = filedialog.askdirectory()
+    entry_pasta.delete(0, tk.END)
+    entry_pasta.insert(0, pasta_escolhida)
+    listar_arquivos()
+
+-abre uma janela para o usuário selecionar uma pasta
+-insere o caminho da pasta no campo de entrada e chama listar_arquivos() para atualizar a lista
+
